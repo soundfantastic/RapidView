@@ -16,7 +16,7 @@
     CGFloat(^Rand)(CGFloat max) = ^CGFloat(CGFloat max) {
         return (rand()/(CGFloat)RAND_MAX)*max;
     };
-    CGRect rect = CGRectMake(Rand(view.frame.size.width), Rand(view.frame.size.height), 8, 8);
+    CGRect rect = CGRectMake(Rand(view.frame.size.width), Rand(view.frame.size.height), 64, 64);
     CGContextFillEllipseInRect(context, rect);
 }
 
@@ -31,7 +31,7 @@
             CGFloat(^Rand)(CGFloat max) = ^CGFloat(CGFloat max) {
                 return (rand()/(CGFloat)RAND_MAX)*max;
             };
-            CGRect rect = CGRectMake(Rand(view.frame.size.width), Rand(view.frame.size.height), 8, 8);
+            CGRect rect = CGRectMake(Rand(view.frame.size.width), Rand(view.frame.size.height), 64, 64);
             CGContextSetFillColorWithColor(context, [NSColor redColor].CGColor);
             CGContextFillEllipseInRect(context, rect);
         }, ((NSView*)_window.contentView).frame);
