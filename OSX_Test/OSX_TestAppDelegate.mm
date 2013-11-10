@@ -36,6 +36,7 @@
             CGContextFillEllipseInRect(context, rect);
         }, ((NSView*)_window.contentView).frame);
         [_window.contentView addSubview:view2];
+        view2 = nil;
     }
     NSView* superview =_window.contentView;
     NSLog(@"%@", superview.subviews);

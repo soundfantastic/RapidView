@@ -6,6 +6,6 @@
 //  Copyright (c) 2013 Polytonic. All rights reserved.
 //
 
-id drawWithMethod(SEL selector, id target, CGRect frame);
+id drawWithMethod(SEL selector, id target, CGRect frame, BOOL superDraw=NO);
 typedef void(^Draw)(id view, CGContextRef context);
-id drawWithBlock(Draw block, CGRect frame);
+id drawWithBlock(Draw block, CGRect frame, BOOL superDraw=NO);
