@@ -1,1 +1,2 @@
-ObjectiveC runtime NSView//UIView creation methods and block&method drawing
+ObjectiveC runtime NSView/UIView creation methods and block&method drawing.
+Min deployment Target = 10.7
