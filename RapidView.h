@@ -7,5 +7,5 @@
 //
 
 id drawWithMethod(SEL selector, id target, CGRect frame, BOOL superDraw=NO);
-typedef void(^Draw)(id view, CGContextRef context);
-id drawWithBlock(Draw block, CGRect frame, BOOL superDraw=NO);
+typedef void(^Function)(id view, CGContextRef context);
+id drawWithBlock(Function draw, CGRect frame, BOOL superDraw=NO);
