@@ -44,7 +44,7 @@ id drawWithMethod(SEL selector, id target, CGRect frame, BOOL superDraw) {
     return [[RapidView alloc] initWithFrame:frame]; //dont forget to release this object
 }
 
-id drawWithBlock(Draw block, CGRect frame, BOOL superDraw) {
+id drawWithBlock(Function draw, CGRect frame, BOOL superDraw) {
     const char* name = [[NSString stringWithFormat:@"VIEW_WITH_BLOCK_%d", ++VIEW_WITH_BLOCK_COUNT] UTF8String];
     Class superClass = NSClassFromString(SUPERVIEW_STRING);
     Class RapidView = objc_allocateClassPair(superClass, name, 0);
@@ -52,8 +52,8 @@ id drawWithBlock(Draw block, CGRect frame, BOOL superDraw) {
         if(superDraw) {
             superDrawRect(RapidView, superClass, dirtyRect);
         }
-        if(block) {
-            block(sender, GRAPHIC_CONTEXT);
+        if(draw) {
+            draw(sender, GRAPHIC_CONTEXT);
         }
     }), [[NSString stringWithFormat:@"v:%s", @encode(gRect)] UTF8String]);
     return [[RapidView alloc] initWithFrame:frame]; //dont forget to release this object
