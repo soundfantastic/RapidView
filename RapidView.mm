@@ -13,11 +13,13 @@
     #import <objc/message.h>
     #define SUPERVIEW_STRING @"UIView"
     typedef CGRect gRect;
+    typedef UIEvent ViewEvent;
     #define GRAPHIC_CONTEXT UIGraphicsGetCurrentContext()
 #else
     #import <objc/objc-runtime.h>
     #define SUPERVIEW_STRING @"NSView"
     typedef NSRect gRect;
+    typedef NSEvent ViewEvent;
     #define GRAPHIC_CONTEXT (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort]
 #endif
 
@@ -60,4 +62,23 @@ id drawWithBlock(Function draw, CGRect frame, BOOL superDraw) {
     }), [[NSString stringWithFormat:@"v:%s", @encode(gRect)] UTF8String]);
     return [[RapidView alloc] initWithFrame:frame]; //dont forget to release this object
 }
+
+void pointDragged(id view, id target, SEL selector) {
+    Class viewClass = object_getClass(view);
+    class_addMethod(viewClass, NSSelectorFromString(@"mouseDragged:"), imp_implementationWithBlock(^(id sender, ViewEvent* event) {
+        if(class_respondsToSelector(object_getClass(target), selector)) {
+            objc_msgSend(target, selector, sender, event);
+        }
+    }), [[NSString stringWithFormat:@"v:%s", @encode(ViewEvent*)] UTF8String]);
+}
+
+void pointTouched(id view, id target, SEL selector) {
+    Class viewClass = object_getClass(view);
+    class_addMethod(viewClass, NSSelectorFromString(@"mouseDown:"), imp_implementationWithBlock(^(id sender, ViewEvent* event) {
+        if(class_respondsToSelector(object_getClass(target), selector)) {
+            objc_msgSend(target, selector, sender, event);
+        }
+    }), [[NSString stringWithFormat:@"v:%s", @encode(ViewEvent*)] UTF8String]);
+}
+
 
