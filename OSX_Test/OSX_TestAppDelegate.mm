@@ -16,7 +16,7 @@
     CGFloat(^Rand)(CGFloat max) = ^CGFloat(CGFloat max) {
         return (rand()/(CGFloat)RAND_MAX)*max;
     };
-    CGRect rect = CGRectMake(Rand(CGRectGetWidth(view.bounds)), Rand(CGRectGetHeight(view.bounds)), 64, 64);
+    CGRect rect = CGRectMake(Rand(CGRectGetWidth(view.bounds))-32, Rand(CGRectGetHeight(view.bounds))-32, 64, 64);
     CGContextFillEllipseInRect(context, rect);
 }
 
@@ -24,7 +24,7 @@
 {
     // Insert code here to initialize your application
     for(int i = 0; i < 100; ++i) {
-        NSView* view = drawWithMethod(@selector(draw:context:), self, ((NSView*)_window.contentView).frame);
+        NSView* view = drawWithMethod(@selector(draw:context:), self, ((NSView*)_window.contentView).frame, YES);
         view.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
         [_window.contentView addSubview:view];
         view = nil;
@@ -33,17 +33,17 @@
             CGFloat(^Rand)(CGFloat max) = ^CGFloat(CGFloat max) {
                 return (rand()/(CGFloat)RAND_MAX)*max;
             };
-            CGRect rect = CGRectMake(Rand(CGRectGetWidth(view.bounds)), Rand(CGRectGetHeight(view.bounds)), 64, 64);
+            CGRect rect = CGRectMake(Rand(CGRectGetWidth(view.bounds))-32, Rand(CGRectGetHeight(view.bounds))-32, 64, 64);
             CGContextSetFillColorWithColor(context, [NSColor redColor].CGColor);
             CGContextFillEllipseInRect(context, rect);
-        }, ((NSView*)_window.contentView).frame);
+        }, ((NSView*)_window.contentView).frame, YES);
         
         view2.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
         [_window.contentView addSubview:view2];
         view2 = nil;
     }
-    NSView* superview =_window.contentView;
-    NSLog(@"%@", superview.subviews);
+//    NSView* superview =_window.contentView;
+//    NSLog(@"%@", superview.subviews);
 }
 
 @end

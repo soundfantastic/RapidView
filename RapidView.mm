@@ -24,8 +24,10 @@
 static int32_t VIEW_WITH_METHOD_COUNT = 0;
 static int32_t VIEW_WITH_BLOCK_COUNT = 0;
 
-void superDrawRect(Class view, Class superClass, gRect dirtyRect) {
-    struct objc_super superView = { view, superClass };
+void superDrawRect(Class view, gRect dirtyRect) {
+    struct objc_super superView;
+    superView.receiver = (id)view;
+    superView.super_class = class_getSuperclass(view);
     objc_msgSendSuper(&superView, @selector(drawRect:), dirtyRect);
 }
 
@@ -35,7 +37,7 @@ id drawWithMethod(SEL selector, id target, CGRect frame, BOOL superDraw) {
     Class RapidView = objc_allocateClassPair(superClass, name, 0);
     class_addMethod(RapidView, NSSelectorFromString(@"drawRect:"), imp_implementationWithBlock(^(id sender, CGRect dirtyRect) {
         if(superDraw) {
-            superDrawRect(RapidView, superClass, dirtyRect);
+            superDrawRect(RapidView, dirtyRect);
         }
         if(class_respondsToSelector(object_getClass(target), selector)) {
             objc_msgSend(target, selector, sender, GRAPHIC_CONTEXT);
@@ -50,7 +52,7 @@ id drawWithBlock(Function draw, CGRect frame, BOOL superDraw) {
     Class RapidView = objc_allocateClassPair(superClass, name, 0);
     class_addMethod(RapidView, NSSelectorFromString(@"drawRect:"), imp_implementationWithBlock(^(id sender, CGRect dirtyRect) {
         if(superDraw) {
-            superDrawRect(RapidView, superClass, dirtyRect);
+            superDrawRect(RapidView, dirtyRect);
         }
         if(draw) {
             draw(sender, GRAPHIC_CONTEXT);
