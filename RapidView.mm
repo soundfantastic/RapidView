@@ -22,7 +22,7 @@
 #endif
 
 static int32_t VIEW_WITH_METHOD_COUNT = 0;
-static int32_t VIEW_WITH_BLOCK_COUNT = 0;
+static int32_t VIEW_WITH_BLOCK_COUNT  = 0;
 
 void superDrawRect(Class view, gRect dirtyRect) {
     struct objc_super superView;
@@ -35,7 +35,7 @@ id drawWithMethod(SEL selector, id target, CGRect frame, BOOL superDraw) {
     const char* name = [[NSString stringWithFormat:@"VIEW_WITH_METHOD_%d", ++VIEW_WITH_METHOD_COUNT] UTF8String];
     Class superClass = NSClassFromString(SUPERVIEW_STRING);
     Class RapidView = objc_allocateClassPair(superClass, name, 0);
-    class_addMethod(RapidView, NSSelectorFromString(@"drawRect:"), imp_implementationWithBlock(^(id sender, CGRect dirtyRect) {
+    class_addMethod(RapidView, NSSelectorFromString(@"drawRect:"), imp_implementationWithBlock(^(id sender, gRect dirtyRect) {
         if(superDraw) {
             superDrawRect(RapidView, dirtyRect);
         }
@@ -50,7 +50,7 @@ id drawWithBlock(Function draw, CGRect frame, BOOL superDraw) {
     const char* name = [[NSString stringWithFormat:@"VIEW_WITH_BLOCK_%d", ++VIEW_WITH_BLOCK_COUNT] UTF8String];
     Class superClass = NSClassFromString(SUPERVIEW_STRING);
     Class RapidView = objc_allocateClassPair(superClass, name, 0);
-    class_addMethod(RapidView, NSSelectorFromString(@"drawRect:"), imp_implementationWithBlock(^(id sender, CGRect dirtyRect) {
+    class_addMethod(RapidView, NSSelectorFromString(@"drawRect:"), imp_implementationWithBlock(^(id sender, gRect dirtyRect) {
         if(superDraw) {
             superDrawRect(RapidView, dirtyRect);
         }
