@@ -12,8 +12,8 @@
 @implementation OSX_TestAppDelegate
 
 - (void) draw:(NSView*)view context:(CGContextRef)context {
-
     CGRect rect = CGRectMake(0, 0, 64, 64);
+    CGContextSetFillColorWithColor(context, [NSColor orangeColor].CGColor);
     CGContextFillEllipseInRect(context, rect);
 }
 
@@ -23,7 +23,9 @@
     mousePoint.x -= CGRectGetMidX(view.bounds);
     mousePoint.y -= CGRectGetMidY(view.bounds);
     [view setFrameOrigin:mousePoint];
-    NSLog(@"%@ %@", view, NSStringFromPoint(mousePoint));
+
+    NSMutableDictionary* dico = [NSDictionary dictionaryWithObject:[NSColor whiteColor] forKey:NSBackgroundColorAttributeName];
+    [view.description drawAtPoint:CGPointMake(1, 1) withAttributes:dico];
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
@@ -50,11 +52,10 @@
         }, rect, YES);
         
         view2.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+        pointDragged(view2, self, @selector(dragged:event:));
         [_window.contentView addSubview:view2];
         view2 = nil;
     }
-//    NSView* superview =_window.contentView;
-//    NSLog(@"%@", superview.subviews);
 }
 
 @end

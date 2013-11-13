@@ -12,73 +12,119 @@
     #import <objc/runtime.h>
     #import <objc/message.h>
     #define SUPERVIEW_STRING @"UIView"
-    typedef CGRect gRect;
-    typedef UIEvent ViewEvent;
     #define GRAPHIC_CONTEXT UIGraphicsGetCurrentContext()
 #else
     #import <objc/objc-runtime.h>
     #define SUPERVIEW_STRING @"NSView"
-    typedef NSRect gRect;
-    typedef NSEvent ViewEvent;
     #define GRAPHIC_CONTEXT (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort]
 #endif
 
 static int32_t VIEW_WITH_METHOD_COUNT = 0;
 static int32_t VIEW_WITH_BLOCK_COUNT  = 0;
 
-void superDrawRect(Class view, gRect dirtyRect) {
+void superDrawRect(Class view, CGRect dirtyRect) {
     struct objc_super superView;
     superView.receiver = (id)view;
     superView.super_class = class_getSuperclass(view);
     objc_msgSendSuper(&superView, @selector(drawRect:), dirtyRect);
 }
 
-id drawWithMethod(SEL selector, id target, CGRect frame, BOOL superDraw) {
-    const char* name = [[NSString stringWithFormat:@"VIEW_WITH_METHOD_%d", ++VIEW_WITH_METHOD_COUNT] UTF8String];
+Class allocateClass(NSString* ident) {
+    const char* name = [ident UTF8String];
     Class superClass = NSClassFromString(SUPERVIEW_STRING);
-    Class RapidView = objc_allocateClassPair(superClass, name, 0);
-    class_addMethod(RapidView, NSSelectorFromString(@"drawRect:"), imp_implementationWithBlock(^(id sender, gRect dirtyRect) {
+    return objc_allocateClassPair(superClass, name, 0);
+}
+
+id drawWithMethod(SEL selector, id target, CGRect frame, BOOL superDraw) {
+    Class RapidView = allocateClass([NSString stringWithFormat:@"VIEW_WITH_METHOD_%d", ++VIEW_WITH_METHOD_COUNT]);
+    Method drawRect = class_getInstanceMethod(class_getSuperclass(RapidView), @selector(drawRect:));
+    class_addMethod(RapidView, @selector(drawRect:), imp_implementationWithBlock(^(id sender, CGRect dirtyRect) {
         if(superDraw) {
             superDrawRect(RapidView, dirtyRect);
         }
         if(class_respondsToSelector(object_getClass(target), selector)) {
             objc_msgSend(target, selector, sender, GRAPHIC_CONTEXT);
         }
-    }), [[NSString stringWithFormat:@"v:%s", @encode(gRect)] UTF8String]);
+    }), method_getTypeEncoding(drawRect));
     return [[RapidView alloc] initWithFrame:frame]; //dont forget to release this object
 }
 
 id drawWithBlock(Function draw, CGRect frame, BOOL superDraw) {
-    const char* name = [[NSString stringWithFormat:@"VIEW_WITH_BLOCK_%d", ++VIEW_WITH_BLOCK_COUNT] UTF8String];
-    Class superClass = NSClassFromString(SUPERVIEW_STRING);
-    Class RapidView = objc_allocateClassPair(superClass, name, 0);
-    class_addMethod(RapidView, NSSelectorFromString(@"drawRect:"), imp_implementationWithBlock(^(id sender, gRect dirtyRect) {
+    Class RapidView = allocateClass([NSString stringWithFormat:@"VIEW_WITH_BLOCK_%d", ++VIEW_WITH_BLOCK_COUNT]);
+    Method drawRect = class_getInstanceMethod(class_getSuperclass(RapidView), @selector(drawRect:));
+    class_addMethod(RapidView, @selector(drawRect:), imp_implementationWithBlock(^(id sender, CGRect dirtyRect) {
         if(superDraw) {
             superDrawRect(RapidView, dirtyRect);
         }
         if(draw) {
             draw(sender, GRAPHIC_CONTEXT);
         }
-    }), [[NSString stringWithFormat:@"v:%s", @encode(gRect)] UTF8String]);
+    }), method_getTypeEncoding(drawRect));
     return [[RapidView alloc] initWithFrame:frame]; //dont forget to release this object
 }
 
-void pointDragged(id view, id target, SEL selector) {
-    Class viewClass = object_getClass(view);
-    class_addMethod(viewClass, NSSelectorFromString(@"mouseDragged:"), imp_implementationWithBlock(^(id sender, ViewEvent* event) {
+#pragma mark - Mouse&touch events
+BOOL pointTouched(id view, id target, SEL selector) {
+    Class RapidView = object_getClass(view);
+    BOOL successful = NO;
+#if TARGET_OS_IPHONE
+    Method method = class_getInstanceMethod(class_getSuperclass(RapidView), @selector(touchesBegan:withEvent:));
+    successful = class_addMethod(RapidView,@selector(touchesBegan:withEvent:), imp_implementationWithBlock(^(id sender, id set, id event) {
+        if(class_respondsToSelector(object_getClass(target), selector)) {
+            objc_msgSend(target, selector, sender, set, event);
+        }
+    }), method_getTypeEncoding(method));
+#else
+    Method method = class_getInstanceMethod(class_getSuperclass(RapidView), @selector(mouseDown:));
+    successful = class_addMethod(RapidView, @selector(mouseDown:), imp_implementationWithBlock(^(id sender, id event) {
         if(class_respondsToSelector(object_getClass(target), selector)) {
             objc_msgSend(target, selector, sender, event);
         }
-    }), [[NSString stringWithFormat:@"v:%s", @encode(ViewEvent*)] UTF8String]);
+    }), method_getTypeEncoding(method));
+#endif
+    return successful;
 }
 
-void pointTouched(id view, id target, SEL selector) {
-    Class viewClass = object_getClass(view);
-    class_addMethod(viewClass, NSSelectorFromString(@"mouseDown:"), imp_implementationWithBlock(^(id sender, ViewEvent* event) {
+BOOL pointDragged(id view, id target, SEL selector) {
+    Class RapidView = object_getClass(view);
+    BOOL successful = NO;
+#if TARGET_OS_IPHONE
+    Method method = class_getInstanceMethod(class_getSuperclass(RapidView), @selector(touchesMoved:withEvent:));
+    successful = class_addMethod(RapidView, @selector(touchesMoved:withEvent:), imp_implementationWithBlock(^(id sender, id set, id event) {
+        if(class_respondsToSelector(object_getClass(target), selector)) {
+            objc_msgSend(target, selector, sender, set, event);
+        }
+    }), method_getTypeEncoding(method));
+#else
+    Method method = class_getInstanceMethod(class_getSuperclass(RapidView), @selector(mouseDragged:));
+    successful = class_addMethod(RapidView, @selector(mouseDragged:), imp_implementationWithBlock(^(id sender, id event) {
         if(class_respondsToSelector(object_getClass(target), selector)) {
             objc_msgSend(target, selector, sender, event);
         }
-    }), [[NSString stringWithFormat:@"v:%s", @encode(ViewEvent*)] UTF8String]);
+    }), method_getTypeEncoding(method));
+#endif
+    return successful;
+}
+
+BOOL pointUnTouched(id view, id target, SEL selector) {
+    Class RapidView = object_getClass(view);
+    BOOL successful = NO;
+#if TARGET_OS_IPHONE
+    Method method = class_getInstanceMethod(class_getSuperclass(RapidView), @selector(touchesEnded:withEvent:));
+    successful = class_addMethod(RapidView, @selector(touchesEnded:withEvent:), imp_implementationWithBlock(^(id sender, id set, id event) {
+        if(class_respondsToSelector(object_getClass(target), selector)) {
+            objc_msgSend(target, selector, sender, set, event);
+        }
+    }), method_getTypeEncoding(method));
+#else
+    Method method = class_getInstanceMethod(class_getSuperclass(RapidView), @selector(mouseUp:));
+    successful = class_addMethod(RapidView, @selector(mouseUp:), imp_implementationWithBlock(^(id sender, id event) {
+        if(class_respondsToSelector(object_getClass(target), selector)) {
+            objc_msgSend(target, selector, sender, event);
+        }
+    }), method_getTypeEncoding(method));
+#endif
+    return successful;
 }
 
 

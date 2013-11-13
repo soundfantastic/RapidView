@@ -16,33 +16,44 @@
 @implementation IOS_TestViewController
 
 - (void) draw:(UIView*)view context:(CGContextRef)context {
-    
-    CGFloat(^Rand)(CGFloat max) = ^CGFloat(CGFloat max) {
-        return (rand()/(CGFloat)RAND_MAX)*max;
-    };
-    CGRect rect = CGRectMake(Rand(CGRectGetWidth(view.bounds)), Rand(CGRectGetHeight(view.bounds)), 64, 64);
+    CGRect rect = CGRectMake(0, 0, 64, 64);
+    CGContextSetFillColorWithColor(context, [UIColor orangeColor].CGColor);
     CGContextFillEllipseInRect(context, rect);
+}
+
+- (void) view:(UIView*)view touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
+    UITouch *touch = [[event allTouches] anyObject];
+   CGPoint touchLocation = [touch locationInView:touch.view];
+    touch.view.center = touchLocation;
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    CGRect mainFrame = self.view.bounds;
+    CGFloat(^Rand)(CGFloat max) = ^CGFloat(CGFloat max) {
+        return (rand()/(CGFloat)RAND_MAX)*max;
+    };
+    
 	// Do any additional setup after loading the view, typically from a nib.
     UIView* superview = self.view;
     for(int i = 0; i < 10; ++i) {
-        UIView* view = drawWithMethod(@selector(draw:context:), self, superview.frame);
+        CGRect rect = CGRectMake(Rand(CGRectGetWidth(mainFrame)), Rand(CGRectGetHeight(mainFrame)), 64, 64);
+        UIView* view = drawWithMethod(@selector(draw:context:), self, rect);
         view.backgroundColor = [UIColor clearColor];
+        pointDragged(view, self, @selector(view:touchesMoved:withEvent:));
+        view.userInteractionEnabled = YES;
         [superview addSubview:view];
         view = nil;
+        rect = CGRectMake(Rand(CGRectGetWidth(mainFrame)), Rand(CGRectGetHeight(mainFrame)), 64, 64);
         UIView* view2 = drawWithBlock(^(UIView* view, CGContextRef context) {
-            CGFloat(^Rand)(CGFloat max) = ^CGFloat(CGFloat max) {
-                return (rand()/(CGFloat)RAND_MAX)*max;
-            };
-            CGRect rect = CGRectMake(Rand(CGRectGetWidth(view.bounds)), Rand(CGRectGetHeight(view.bounds)), 64, 64);
+            CGRect rect = CGRectMake(0, 0, 64, 64);
             CGContextSetFillColorWithColor(context, [UIColor redColor].CGColor);
             CGContextFillEllipseInRect(context, rect);
-        }, superview.frame);
+        }, rect);
         view2.backgroundColor = [UIColor clearColor];
+        pointDragged(view2, self, @selector(view:touchesMoved:withEvent:));
+        view2.userInteractionEnabled = YES;
         [superview addSubview:view2];
         view2 = nil;
     }
