@@ -26,6 +26,10 @@
 		DC3545B6182FFCE900E37D0B /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DC3545B5182FFCE900E37D0B /* Images.xcassets */; };
 		DC3545CF182FFD4000E37D0B /* RapidView.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCAEFF38182FF13100F6833C /* RapidView.mm */; };
 		DC3545D0182FFD4100E37D0B /* RapidView.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCAEFF38182FF13100F6833C /* RapidView.mm */; };
+		DC686CBA183545D80099EA12 /* RapidView(events).mm in Sources */ = {isa = PBXBuildFile; fileRef = DC686CB8183545D80099EA12 /* RapidView(events).mm */; };
+		DC686CBB183545D80099EA12 /* RapidView(events).mm in Sources */ = {isa = PBXBuildFile; fileRef = DC686CB8183545D80099EA12 /* RapidView(events).mm */; };
+		DC686CBE183546D80099EA12 /* RapidView(constructor).mm in Sources */ = {isa = PBXBuildFile; fileRef = DC686CBC183546D80099EA12 /* RapidView(constructor).mm */; };
+		DC686CBF183546D80099EA12 /* RapidView(constructor).mm in Sources */ = {isa = PBXBuildFile; fileRef = DC686CBC183546D80099EA12 /* RapidView(constructor).mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -54,6 +58,10 @@
 		DC3545B2182FFCE900E37D0B /* IOS_TestViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IOS_TestViewController.h; sourceTree = "<group>"; };
 		DC3545B3182FFCE900E37D0B /* IOS_TestViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = IOS_TestViewController.mm; sourceTree = "<group>"; };
 		DC3545B5182FFCE900E37D0B /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		DC686CB8183545D80099EA12 /* RapidView(events).mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "RapidView(events).mm"; sourceTree = "<group>"; };
+		DC686CB9183545D80099EA12 /* RapidView(events).h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RapidView(events).h"; sourceTree = "<group>"; };
+		DC686CBC183546D80099EA12 /* RapidView(constructor).mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "RapidView(constructor).mm"; sourceTree = "<group>"; };
+		DC686CBD183546D80099EA12 /* RapidView(constructor).h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RapidView(constructor).h"; sourceTree = "<group>"; };
 		DC866BB2183002140059A957 /* LICENCE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENCE; sourceTree = "<group>"; };
 		DCAEFF04182FF10000F6833C /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		DCAEFF07182FF10000F6833C /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -140,6 +148,10 @@
 			isa = PBXGroup;
 			children = (
 				DC866BB2183002140059A957 /* LICENCE */,
+				DC686CB8183545D80099EA12 /* RapidView(events).mm */,
+				DC686CB9183545D80099EA12 /* RapidView(events).h */,
+				DC686CBC183546D80099EA12 /* RapidView(constructor).mm */,
+				DC686CBD183546D80099EA12 /* RapidView(constructor).h */,
 				DCAEFF38182FF13100F6833C /* RapidView.mm */,
 				DCAEFF39182FF13100F6833C /* RapidView.h */,
 				DC35456A182FFCCD00E37D0B /* OSX_Test */,
@@ -280,6 +292,8 @@
 				DC3545CF182FFD4000E37D0B /* RapidView.mm in Sources */,
 				DC354571182FFCCD00E37D0B /* main.m in Sources */,
 				DC354578182FFCCD00E37D0B /* OSX_TestAppDelegate.mm in Sources */,
+				DC686CBE183546D80099EA12 /* RapidView(constructor).mm in Sources */,
+				DC686CBA183545D80099EA12 /* RapidView(events).mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -288,9 +302,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				DC3545AB182FFCE900E37D0B /* IOS_TestAppDelegate.m in Sources */,
+				DC686CBF183546D80099EA12 /* RapidView(constructor).mm in Sources */,
 				DC3545A7182FFCE900E37D0B /* main.m in Sources */,
 				DC3545B4182FFCE900E37D0B /* IOS_TestViewController.mm in Sources */,
 				DC3545D0182FFD4100E37D0B /* RapidView.mm in Sources */,
+				DC686CBB183545D80099EA12 /* RapidView(events).mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

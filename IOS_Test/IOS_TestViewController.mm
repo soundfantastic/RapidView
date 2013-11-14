@@ -41,7 +41,11 @@
         CGRect rect = CGRectMake(Rand(CGRectGetWidth(mainFrame)), Rand(CGRectGetHeight(mainFrame)), 64, 64);
         UIView* view = drawWithMethod(@selector(draw:context:), self, rect);
         view.backgroundColor = [UIColor clearColor];
-        pointDragged(view, self, @selector(view:touchesMoved:withEvent:));
+        pointDraggedWithBlock(view, ^(UIView* view, id set, id theEvent) {
+            UITouch *touch = [[theEvent allTouches] anyObject];
+            CGPoint touchLocation = [touch locationInView:touch.view];
+            touch.view.center = touchLocation;
+        });
         view.userInteractionEnabled = YES;
         [superview addSubview:view];
         view = nil;
@@ -52,7 +56,7 @@
             CGContextFillEllipseInRect(context, rect);
         }, rect);
         view2.backgroundColor = [UIColor clearColor];
-        pointDragged(view2, self, @selector(view:touchesMoved:withEvent:));
+        pointDraggedWithMethod(view2, self, @selector(view:touchesMoved:withEvent:));
         view2.userInteractionEnabled = YES;
         [superview addSubview:view2];
         view2 = nil;
