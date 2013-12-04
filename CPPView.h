@@ -7,7 +7,7 @@
 //
 
 //C++ class for dynamic NSView/UIView drawing using C function pointer, Objective-C block, Objective-C method
-//Example of using:
+//Example:
 //NSView* view = ViewEngine<NSView>().functionDraw<Block, NSRect>(^(NSView* view, CGContextRef context){draw here}, frame, (BOOL)superDraw);
 //UIView* view = ViewEngine<UIView>().methodDraw<CGRect>(@selector(view:context:), target, frame, (BOOL)superDraw);
 //- (void) view:(UIView*)view context:(CGContextRef)context { draw here }
