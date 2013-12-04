@@ -64,7 +64,7 @@ public:
     }
     
     template <class Rect>
-    id methodDraw(SEL selector, id target, Rect frame, BOOL superDraw=YES) {
+    Class methodDraw(SEL selector, id target, Rect frame, BOOL superDraw=YES) {
         NSString* ident = [NSString stringWithFormat:@"VIEW_WITH_OBJC_METHOD_%d", ++VIEW_INDEX];
         Class Subview = allocateClass(ident);
         Method drawRect = class_getInstanceMethod(class_getSuperclass(Subview), @selector(drawRect:));
