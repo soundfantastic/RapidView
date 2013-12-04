@@ -12,8 +12,8 @@
 //- (void) view:(UIView*)view context:(CGContextRef)context { draw here }
 //...
 
-#ifndef __muzikBox__CPPView__
-#define __muzikBox__CPPView__
+#ifndef __RapidView__CPPView__
+#define __RapidView__CPPView__
 
 #include <iostream>
 #include <typeinfo>
@@ -100,5 +100,5 @@ private:
     }
 };
 
-#endif /* defined(__muzikBox__CPPView__) */
+#endif /* defined(__RapidView__CPPView__) */
 
