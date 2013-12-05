@@ -44,14 +44,14 @@ BOOL pointTouchedWithBlock(id view, Events events) {
     BOOL successful = NO;
 #if TARGET_OS_IPHONE
     Method method = class_getInstanceMethod(class_getSuperclass(RapidView), @selector(touchesBegan:withEvent:));
-    successful = class_addMethod(RapidView, @selector(touchesMoved:withEvent:), imp_implementationWithBlock(^(id sender, id set, id event) {
+    successful = class_addMethod(RapidView, @selector(touchesBegan:withEvent:), imp_implementationWithBlock(^(id sender, id set, id event) {
         if(events) {
             events(sender, set, event);
         }
     }), method_getTypeEncoding(method));
 #else
     Method method = class_getInstanceMethod(class_getSuperclass(RapidView), @selector(mouseDown:));
-    successful = class_addMethod(RapidView, @selector(mouseDragged:), imp_implementationWithBlock(^(id sender, id event) {
+    successful = class_addMethod(RapidView, @selector(mouseDown:), imp_implementationWithBlock(^(id sender, id event) {
         if(events) {
             events(sender, nil, event);
         }
@@ -130,14 +130,14 @@ BOOL pointUntouchedWithBlock(id view, Events events) {
     BOOL successful = NO;
 #if TARGET_OS_IPHONE
     Method method = class_getInstanceMethod(class_getSuperclass(RapidView), @selector(touchesEnded:withEvent:));
-    successful = class_addMethod(RapidView, @selector(touchesMoved:withEvent:), imp_implementationWithBlock(^(id sender, id set, id event) {
+    successful = class_addMethod(RapidView, @selector(touchesEnded:withEvent:), imp_implementationWithBlock(^(id sender, id set, id event) {
         if(events) {
             events(sender, set, event);
         }
     }), method_getTypeEncoding(method));
 #else
     Method method = class_getInstanceMethod(class_getSuperclass(RapidView), @selector(mouseUp:));
-    successful = class_addMethod(RapidView, @selector(mouseDragged:), imp_implementationWithBlock(^(id sender, id event) {
+    successful = class_addMethod(RapidView, @selector(mouseUp:), imp_implementationWithBlock(^(id sender, id event) {
         if(events) {
             events(sender, nil, event);
         }

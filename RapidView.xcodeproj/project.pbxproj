@@ -30,6 +30,8 @@
 		DC686CBB183545D80099EA12 /* RapidView(events).mm in Sources */ = {isa = PBXBuildFile; fileRef = DC686CB8183545D80099EA12 /* RapidView(events).mm */; };
 		DC686CBE183546D80099EA12 /* RapidView(constructor).mm in Sources */ = {isa = PBXBuildFile; fileRef = DC686CBC183546D80099EA12 /* RapidView(constructor).mm */; };
 		DC686CBF183546D80099EA12 /* RapidView(constructor).mm in Sources */ = {isa = PBXBuildFile; fileRef = DC686CBC183546D80099EA12 /* RapidView(constructor).mm */; };
+		DCA16D3A184FE3BD0017944E /* CPPView.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCA16D38184FE3BD0017944E /* CPPView.mm */; };
+		DCA16D3B184FE3BD0017944E /* CPPView.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCA16D38184FE3BD0017944E /* CPPView.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -63,6 +65,8 @@
 		DC686CBC183546D80099EA12 /* RapidView(constructor).mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "RapidView(constructor).mm"; sourceTree = "<group>"; };
 		DC686CBD183546D80099EA12 /* RapidView(constructor).h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RapidView(constructor).h"; sourceTree = "<group>"; };
 		DC866BB2183002140059A957 /* LICENCE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENCE; sourceTree = "<group>"; };
+		DCA16D38184FE3BD0017944E /* CPPView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CPPView.mm; sourceTree = "<group>"; };
+		DCA16D39184FE3BD0017944E /* CPPView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPPView.h; sourceTree = "<group>"; };
 		DCAEFF04182FF10000F6833C /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		DCAEFF07182FF10000F6833C /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		DCAEFF08182FF10000F6833C /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
@@ -148,6 +152,8 @@
 			isa = PBXGroup;
 			children = (
 				DC866BB2183002140059A957 /* LICENCE */,
+				DCA16D38184FE3BD0017944E /* CPPView.mm */,
+				DCA16D39184FE3BD0017944E /* CPPView.h */,
 				DC686CB8183545D80099EA12 /* RapidView(events).mm */,
 				DC686CB9183545D80099EA12 /* RapidView(events).h */,
 				DC686CBC183546D80099EA12 /* RapidView(constructor).mm */,
@@ -293,6 +299,7 @@
 				DC354571182FFCCD00E37D0B /* main.m in Sources */,
 				DC354578182FFCCD00E37D0B /* OSX_TestAppDelegate.mm in Sources */,
 				DC686CBE183546D80099EA12 /* RapidView(constructor).mm in Sources */,
+				DCA16D3A184FE3BD0017944E /* CPPView.mm in Sources */,
 				DC686CBA183545D80099EA12 /* RapidView(events).mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -301,6 +308,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DCA16D3B184FE3BD0017944E /* CPPView.mm in Sources */,
 				DC3545AB182FFCE900E37D0B /* IOS_TestAppDelegate.m in Sources */,
 				DC686CBF183546D80099EA12 /* RapidView(constructor).mm in Sources */,
 				DC3545A7182FFCE900E37D0B /* main.m in Sources */,

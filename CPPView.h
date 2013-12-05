@@ -1,20 +1,25 @@
 //
 //  CPPView.h
-//  muzikBox
 //
 //  Created by Dragan Petrovic on 04/12/2013.
 //
 //
 
 //C++ class for dynamic NSView/UIView drawing using C function pointer, Objective-C block, Objective-C method
-//Example of using:
-//NSView* view = ViewEngine<NSView>().functionDraw<Block, NSRect>(^(NSView* view, CGContextRef context){draw here}, frame, (BOOL)superDraw);
-//UIView* view = ViewEngine<UIView>().methodDraw<CGRect>(@selector(view:context:), target, frame, (BOOL)superDraw);
+//Example:
+//NSView* view = ViewEngine<NSView>().inject_functionDraw<Block, NSRect>(^(NSView* view, CGContextRef context){draw here}, frame, (BOOL)superDraw);
+//UIView* view = ViewEngine<UIView>().inject_methodDraw<CGRect>(@selector(view:context:), target, frame, (BOOL)superDraw);
 //- (void) view:(UIView*)view context:(CGContextRef)context { draw here }
 //...
+//Inject Mouse and UITouch events
+//ViewEngine<NSView>().inject_functionPointMoved<BlockEvents>(ns_view, ^(id view, id set, id events) {
+//ViewEngine<UIView>().inject_functionPointMoved<BlockEvents>(ui_view, ^(id view, id set, id events) {
+//NSLog(@"Moved %@", events);
+//});
 
-#ifndef __muzikBox__CPPView__
-#define __muzikBox__CPPView__
+
+#ifndef __RapidView__CPPView__
+#define __RapidView__CPPView__
 
 #include <iostream>
 #include <typeinfo>
@@ -27,22 +32,23 @@
 #endif
 
 
-typedef void(^Block)(id view, CGContextRef context);
-typedef void(*Function)(id view, CGContextRef context);
-
 static int32_t VIEW_INDEX = 0;
+
+typedef void(^BlockDraw)(id view, CGContextRef context);
+typedef void(*FunctionDraw)(id view, CGContextRef context);
+
+typedef void(^BlockEvents)(id view, id set, id events);
+typedef void(*FunctionEvents)(id view, id set, id events);
 
 template <class Superview> class ViewEngine {
     
 public:
     ViewEngine() {}
     ~ViewEngine() {}
-
-public:
     
     //Create view with Objective-c block or C function pointer
     template <class Type, class Rect>
-    Class functionDraw(Type function, Rect frame, BOOL superDraw=YES) {
+    Class inject_functionDraw(Type function, Rect frame, BOOL superDraw=YES) {
         NSString *ident = [NSString stringWithFormat:@"VIEW_WITH_%s_%d", typeid(Type).name(), ++VIEW_INDEX];
         Class Subview = allocateClass(ident);
         Method drawRect = class_getInstanceMethod(class_getSuperclass(Subview), @selector(drawRect:));
@@ -65,7 +71,7 @@ public:
     }
     
     template <class Rect>
-    id methodDraw(SEL selector, id target, Rect frame, BOOL superDraw=YES) {
+    Class inject_methodDraw(SEL selector, id target, Rect frame, BOOL superDraw=YES) {
         NSString* ident = [NSString stringWithFormat:@"VIEW_WITH_OBJC_METHOD_%d", ++VIEW_INDEX];
         Class Subview = allocateClass(ident);
         Method drawRect = class_getInstanceMethod(class_getSuperclass(Subview), @selector(drawRect:));
@@ -87,6 +93,132 @@ public:
         return [[Subview alloc] initWithFrame:frame];
     }
     
+    
+    void inject_methodPointTouched(id view, id target, SEL selector) {
+        Class Subview = object_getClass(view);
+#if TARGET_OS_IPHONE
+        Method method = class_getInstanceMethod(class_getSuperclass(Subview), @selector(touchesBegan:withEvent:));
+        successful = class_addMethod(Subview, @selector(touchesBegan:withEvent:), imp_implementationWithBlock(^(id sender, id set, id event) {
+            if(class_respondsToSelector(object_getClass(target), selector)) {
+                objc_msgSend(target, selector, sender, set, event);
+            }
+        }), method_getTypeEncoding(method));
+#else
+        Method method = class_getInstanceMethod(class_getSuperclass(Subview), @selector(mouseDown:));
+        class_addMethod(Subview, @selector(mouseDown:), imp_implementationWithBlock(^(id sender, id event) {
+            if(class_respondsToSelector(object_getClass(target), selector)) {
+                objc_msgSend(target, selector, sender, event);
+            }
+        }), method_getTypeEncoding(method));
+#endif
+    }
+    
+    void inject_methodPointUnTouched(id view, id target, SEL selector) {
+        Class Subview = object_getClass(view);
+#if TARGET_OS_IPHONE
+        Method method = class_getInstanceMethod(class_getSuperclass(Subview), @selector(touchesEnded:withEvent:));
+        successful = class_addMethod(Subview, @selector(touchesEnded:withEvent:), imp_implementationWithBlock(^(id sender, id set, id event) {
+            if(class_respondsToSelector(object_getClass(target), selector)) {
+                objc_msgSend(target, selector, sender, set, event);
+            }
+        }), method_getTypeEncoding(method));
+#else
+        Method method = class_getInstanceMethod(class_getSuperclass(Subview), @selector(mouseUp:));
+        class_addMethod(Subview, @selector(mouseUp:), imp_implementationWithBlock(^(id sender, id event) {
+            if(class_respondsToSelector(object_getClass(target), selector)) {
+                objc_msgSend(target, selector, sender, event);
+            }
+        }), method_getTypeEncoding(method));
+#endif
+    }
+    
+    void inject_methodPointMoved(id view, id target, SEL selector) {
+        Class Subview = object_getClass(view);
+#if TARGET_OS_IPHONE
+        Method method = class_getInstanceMethod(class_getSuperclass(Subview), @selector(touchesMoved:withEvent:));
+        successful = class_addMethod(Subview, @selector(touchesMoved:withEvent:), imp_implementationWithBlock(^(id sender, id set, id event) {
+            if(class_respondsToSelector(object_getClass(target), selector)) {
+                objc_msgSend(target, selector, sender, set, event);
+            }
+        }), method_getTypeEncoding(method));
+#else
+        Method method = class_getInstanceMethod(class_getSuperclass(Subview), @selector(mouseDragged:));
+        class_addMethod(Subview, @selector(mouseDragged:), imp_implementationWithBlock(^(id sender, id event) {
+            if(class_respondsToSelector(object_getClass(target), selector)) {
+                objc_msgSend(target, selector, sender, event);
+            }
+        }), method_getTypeEncoding(method));
+#endif
+    }
+    
+    
+    //Functions
+    template <class Events>
+    BOOL inject_functionPointTouched(id view, Events events) {
+        Class Subview = object_getClass(view);
+        BOOL successful = NO;
+#if TARGET_OS_IPHONE
+        Method method = class_getInstanceMethod(class_getSuperclass(Subview), @selector(touchesBegan:withEvent:));
+        successful = class_addMethod(Subview, @selector(touchesBegan:withEvent:), imp_implementationWithBlock(^(id sender, id set, id event) {
+            if(events) {
+                events(sender, set, event);
+            }
+        }), method_getTypeEncoding(method));
+#else
+        Method method = class_getInstanceMethod(class_getSuperclass(Subview), @selector(mouseDown:));
+        successful = class_addMethod(Subview, @selector(mouseDown:), imp_implementationWithBlock(^(id sender, id event) {
+            if(events) {
+                events(sender, nil, event);
+            }
+        }), method_getTypeEncoding(method));
+#endif
+        return successful;
+    }
+    
+    template <class Events>
+    BOOL inject_functionPointUnTouched(id view, Events events) {
+        Class Subview = object_getClass(view);
+        BOOL successful = NO;
+#if TARGET_OS_IPHONE
+        Method method = class_getInstanceMethod(class_getSuperclass(Subview), @selector(touchesEnded:withEvent:));
+        successful = class_addMethod(Subview, @selector(touchesEnded:withEvent:), imp_implementationWithBlock(^(id sender, id set, id event) {
+            if(events) {
+                events(sender, set, event);
+            }
+        }), method_getTypeEncoding(method));
+#else
+        Method method = class_getInstanceMethod(class_getSuperclass(Subview), @selector(mouseUp:));
+        successful = class_addMethod(Subview, @selector(mouseUp:), imp_implementationWithBlock(^(id sender, id event) {
+            if(events) {
+                events(sender, nil, event);
+            }
+        }), method_getTypeEncoding(method));
+#endif
+        return successful;
+    }
+    
+    template <class Events>
+    BOOL inject_functionPointMoved(id view, Events events) {
+        Class Subview = object_getClass(view);
+        BOOL successful = NO;
+#if TARGET_OS_IPHONE
+        Method method = class_getInstanceMethod(class_getSuperclass(Subview), @selector(touchesMoved:withEvent:));
+        successful = class_addMethod(Subview, @selector(touchesMoved:withEvent:), imp_implementationWithBlock(^(id sender, id set, id event) {
+            if(events) {
+                events(sender, set, event);
+            }
+        }), method_getTypeEncoding(method));
+#else
+        Method method = class_getInstanceMethod(class_getSuperclass(Subview), @selector(mouseDragged:));
+        successful = class_addMethod(Subview, @selector(mouseDragged:), imp_implementationWithBlock(^(id sender, id event) {
+            if(events) {
+                events(sender, nil, event);
+            }
+        }), method_getTypeEncoding(method));
+#endif
+        return successful;
+    }
+    
 private:
     
     Class allocateClass(NSString* ident) {
@@ -100,6 +232,5 @@ private:
         objc_msgSendSuper(&superView, @selector(drawRect:), dirtyRect);
     }
 };
-
-#endif /* defined(__muzikBox__CPPView__) */
+#endif /* defined(__RapidView__CPPView__) */
 
